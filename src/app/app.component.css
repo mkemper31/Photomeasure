@@ -1,0 +1,43 @@
+#image {
+  display: block;
+  max-width: 100%;
+}
+
+.sidebar {
+  vertical-align: top;
+  display: inline-block;
+  width: 10%;
+  border-right: 1px solid black;
+}
+
+.mainview {
+  display: inline-block;
+  width: 85%;
+}
+
+.disabled, .enabled {
+  color: white;
+}
+
+.disabled {
+  background-color: red;
+}
+
+.enabled {
+  background-color: green;
+}
+
+/* .measurestart {
+  z-index: 999;
+  background-color: lightblue;
+  border-radius: 50%;
+  border: 1px solid black;
+  width: 10px;
+  height: 10px;
+  cursor: move;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  box-sizing: border-box;
+} */

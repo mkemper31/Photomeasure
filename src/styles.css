@@ -1,1 +1,67 @@
 /* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.measurestart, .measureend, .measuredisp, .measureline, .anglestart, .angleend, .anglecenter, .angleline, .angledisp {
+  visibility: hidden;
+}
+
+.measurestart, .measureend, .anglestart, .angleend, .anglecenter {
+  border-radius: 50%;
+  border: 1px solid black;
+  width: 10px;
+  height: 10px;
+  cursor: move;
+  display: inline-flex;
+  vertical-align: top;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.measurestart {
+  background-color: orangered;
+}
+
+.measureend {
+  background-color: orange;
+}
+
+.anglestart {
+  background-color: blue;
+}
+
+.anglecenter {
+  background-color: green;
+}
+
+.angleend {
+  background-color: aqua;
+}
+
+.measureline, .angleline {
+  position: fixed;
+  border: 1px dashed red;
+  background: transparent;
+  display: inline-flex;
+}
+
+.measuredisp, .angledisp {
+  position: fixed;
+  display: inline-flex;
+  color: black;
+  background-color: white;
+  border-radius: 10%;
+  border: 1px solid grey;
+}
+
+.measuredisp p, .angledisp p {
+  margin: 0 auto;
+  padding: 0 auto;
+}
+
+.measureenabled, .angleenabled {
+  cursor: crosshair !important;
+}
