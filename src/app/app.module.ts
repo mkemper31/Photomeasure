@@ -7,17 +7,13 @@ import { AppComponent } from './app.component';
 
 
 import { AngularCropperjsModule } from 'angular-cropperjs';
-import { ControlbarComponent } from './controlbar/controlbar.component';
-import { ImageboxComponent } from './imagebox/imagebox.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
 
 @NgModule({
   declarations: [
-    AppComponent,
-    ControlbarComponent,
-    ImageboxComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
