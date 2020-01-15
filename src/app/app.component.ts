@@ -18,6 +18,8 @@ export class AppComponent {
   cropperEnabled = false;
   cropperReady = false;
 
+  dragMoveEnabled = false;
+
   measureEnabled = false;
   measureIsCircle = false;
   startPlaced = false;
@@ -35,23 +37,33 @@ export class AppComponent {
   oldScaleType = 'mm';
   scaleType = 'mm';
   scale = 100;
-  zoomScale = 1;
+  zoomScale = 0;
   relativeScale = 1;
+  initialRatio = 1;
 
   imageUrl = 'https://i.imgur.com/o0pSgfS.png';
   config = {
     autoCrop: false,
+    movable: true,
+    zoomable: true,
+    viewMode: 2,
     ready() {
       console.log('ready');
     }
   };
   constructor() {
   }
+  logCropper() {
+    console.log(this.angularCropper);
+  }
 
   readyTrigger() {
     this.cropperReady = true;
     this.angularCropper.cropper.disable();
+    console.log(this.angularCropper.cropper.getImageData().width);
+    this.initialRatio = this.angularCropper.cropper.getImageData().width / this.angularCropper.cropper.getImageData().naturalWidth;
     document.getElementsByClassName('cropper-wrapper')[0].id = 'cropper-wrapper';
+    document.getElementsByClassName('cropper-crop')[0].id = 'cropper-box';
     this.setRelativeScale();
     const cropWrap = document.getElementById('cropper-wrapper');
     const measureStart = document.getElementById('measurestart');
@@ -77,15 +89,24 @@ export class AppComponent {
   }
 
   zoomIn(event) {
-    this.angularCropper.cropper.zoom(0.5);
+    this.angularCropper.cropper.zoomTo(2);
 
   }
   zoomOut(event) {
-    this.angularCropper.cropper.zoom(-0.5);
+    this.angularCropper.cropper.zoomTo(-0.5);
   }
 
   clearBox() {
     this.angularCropper.cropper.clear();
+  }
+
+  toggleDrag() {
+    if (this.dragMoveEnabled) {
+      this.angularCropper.cropper.setDragMode('none');
+    } else {
+      this.angularCropper.cropper.setDragMode('move');
+    }
+    this.dragMoveEnabled = !this.dragMoveEnabled;
   }
 
   clearMeasureLine() {
@@ -169,6 +190,8 @@ export class AppComponent {
   }
 
   onImageClick(event: MouseEvent) {
+    console.log(event.target['id']);
+    if (event.target['id'] != 'cropper-box') return;
     if (this.measureEnabled) {
       if (!this.startPlaced) {
         this.placeMeasureStart(event);
@@ -364,6 +387,20 @@ export class AppComponent {
 
   logScaleAndType() {
     console.log(this.scale, this.scaleType);
+  }
+
+  resetZoom() {
+    this.angularCropper.cropper.zoomTo(this.initialRatio);
+  }
+
+  updateZoom(event: InputEvent) {
+    const maxZoom = 2 * this.initialRatio;
+    this.angularCropper.cropper.enable();
+    this.angularCropper.cropper.zoomTo(event.target['valueAsNumber'] / 100 * this.initialRatio + this.initialRatio + (maxZoom * (event.target['valueAsNumber'] / 100)));
+    this.zoomScale = event.target['valueAsNumber'];
+    if (!this.cropperEnabled) {
+      this.angularCropper.cropper.disable();
+    }
   }
 
   updateScale(event: Event) {

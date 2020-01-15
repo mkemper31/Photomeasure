@@ -1,7 +1,14 @@
 <div class="sidebar">
   <div *ngIf="cropperReady">
+    <div class="slide_container">
+      <p>Adjust Zoom</p>
+      <input type="range" min="0" max="99" step="1" [value]="zoomScale" class="slider" id="zoom_slider" (change)="updateZoom($event)">
+    </div>
+    <button type="button" (click)="toggleDrag()">Toggle Dragging</button>
+    <button type="button" (click)="logCropper()">Log Cropper</button>
     <button type="button" (click)="zoomIn($event)">Zoom In</button>
     <button type="button" (click)="zoomOut($event)">Zoom Out</button>
+    <button type="button" (click)="resetZoom()">Reset Zoom</button>
     <button type="button" (click)="clearBox()">Clear Cropper</button>
     <button type="button" (click)="enableCropper()">Enable Cropper</button>
     <button type="button" (click)="disableCropper()">Disable Cropper</button>
