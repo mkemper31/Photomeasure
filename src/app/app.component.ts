@@ -23,7 +23,9 @@ export class AppComponent {
   measureEnabled = false;
   measureIsCircle = false;
   startPlaced = false;
+  measureStartPos = {x: 0, y: 0};
   endPlaced = false;
+  measureEndPos = {x: 0, y: 0};
   distance = 0;
 
   angleEnabled = false;
@@ -40,6 +42,7 @@ export class AppComponent {
   zoomScale = 0;
   relativeScale = 1;
   initialRatio = 1;
+  timesZoom = 1;
 
   imageUrl = 'https://i.imgur.com/o0pSgfS.png';
   config = {
@@ -216,6 +219,9 @@ export class AppComponent {
     const mainview = document.getElementById('mainview') as HTMLDivElement;
     const xCoord = event.offsetX - 5;
     const yCoord = (mainview.offsetHeight - event.offsetY - 12) * -1;
+    this.measureStartPos.x = xCoord;
+    this.measureStartPos.y = yCoord;
+    console.log(this.measureStartPos);
     starter.style.transform = 'translate3d(' + xCoord + 'px, ' + yCoord + 'px, 0px)';
     starter.style.visibility = 'visible';
   }
@@ -225,6 +231,8 @@ export class AppComponent {
     const mainview = document.getElementById('mainview') as HTMLDivElement;
     const xCoord = event.offsetX - 15;
     const yCoord = (mainview.offsetHeight - event.offsetY - 12) * -1;
+    this.measureEndPos.x = xCoord;
+    this.measureEndPos.y = yCoord;
     ender.style.transform = 'translate3d(' + xCoord + 'px, ' + yCoord + 'px, 0px)';
     ender.style.visibility = 'visible';
     this.endPlaced = true;
@@ -395,12 +403,22 @@ export class AppComponent {
 
   updateZoom(event: InputEvent) {
     const maxZoom = 2 * this.initialRatio;
+    const zoomRatio = event.target['valueAsNumber'] / 100 * this.initialRatio + this.initialRatio + (maxZoom * (event.target['valueAsNumber'] / 100));
+    console.log('zoom ratio:', zoomRatio, zoomRatio / this.initialRatio);
+    this.timesZoom = zoomRatio / this.initialRatio;
     this.angularCropper.cropper.enable();
-    this.angularCropper.cropper.zoomTo(event.target['valueAsNumber'] / 100 * this.initialRatio + this.initialRatio + (maxZoom * (event.target['valueAsNumber'] / 100)));
+    this.angularCropper.cropper.zoomTo(zoomRatio);
     this.zoomScale = event.target['valueAsNumber'];
     if (!this.cropperEnabled) {
       this.angularCropper.cropper.disable();
     }
+  }
+
+  onZoom(event: CustomEvent) {
+    console.log('--------zoomed---------');
+    console.log(event);
+    console.log(event.detail);
+    this.timesZoom = Math.max(event.detail.ratio / this.initialRatio, 1);
   }
 
   updateScale(event: Event) {
@@ -465,6 +483,35 @@ export class AppComponent {
     const { top, left, width, height } = document.getElementsByClassName('cropper')[0].getBoundingClientRect();
     console.log('width:', width);
     this.relativeScale = this.scale / width;
+  }
+
+  onDragMove(event: CustomEvent) {
+    if (event.detail.action !== 'move') {
+      return;
+    }
+    const measureStart = document.getElementById('measurestart');
+    const measureEnd = document.getElementById('measureend');
+    const measureLine = document.getElementById('measureline');
+    const angleStart = document.getElementById('anglestart');
+    const angleCenter = document.getElementById('anglecenter');
+    const angleEnd = document.getElementById('angleend');
+    const angleLineStart = document.getElementById('anglelinestart');
+    const angleLineEnd = document.getElementById('anglelineend');
+    if (this.startPlaced) {
+      this.measureStartPos.x += event.detail.originalEvent.movementX;
+      this.measureStartPos.y += event.detail.originalEvent.movementY;
+      measureStart.style.transform = 'translate3d(' + this.measureStartPos.x + 'px, ' + this.measureStartPos.y + 'px, 0px)';
+    }
+    if (this.endPlaced) {
+      this.measureEndPos.x += event.detail.originalEvent.movementX;
+      this.measureEndPos.y += event.detail.originalEvent.movementY;
+      measureEnd.style.transform = 'translate3d(' + this.measureEndPos.x + 'px, ' + this.measureEndPos.y + 'px, 0px)';
+      this.updateDistanceLine();
+    }
+  }
+
+  onCropButtonClick() {
+    this.angularCropper.cropper.crop();
   }
 
 }
